@@ -4,14 +4,14 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendShipmentConfirmation(toEmail, shipment) {
   const { data, error } = await resend.emails.send({
-    from: "Fast Way Delivery <onboarding@resend.dev>",
+    from: "Fast Way Shiping <delivery@fastwayshiping.com>",
     to: toEmail,
     subject: `Shipment Confirmed — ${shipment.trackingNumber}`,
     html: `
       <div style="font-family:Segoe UI,sans-serif;max-width:600px;margin:0 auto;background:#f0f2f5;padding:24px;border-radius:12px;">
         
         <div style="background:#1e3a5f;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px;">
-          <h1 style="color:#fff;margin:0;font-size:1.4rem;">Fast Way Delivery</h1>
+          <h1 style="color:#fff;margin:0;font-size:1.4rem;">Fast Way Shiping</h1>
           <p style="color:rgba(255,255,255,0.7);margin:6px 0 0;font-size:0.9rem;">Shipment Confirmation Receipt</p>
         </div>
 
@@ -81,13 +81,13 @@ async function sendShipmentConfirmation(toEmail, shipment) {
 
 async function sendAdminOTP(toEmail, otp) {
   const { data, error } = await resend.emails.send({
-    from: "Fast Way Delivery <onboarding@resend.dev>",
-    to: process.env.RESEND_TEST_EMAIL || toEmail,
+    from: "Fast Way Shipping <delivery@fastwayshiping.com>",
+    to: toEmail,
     subject: "Your Admin Login Code",
     html: `
       <div style="font-family:Segoe UI,sans-serif;max-width:480px;margin:0 auto;background:#f0f2f5;padding:24px;border-radius:12px;">
         <div style="background:#1a2e44;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px;">
-          <h1 style="color:#fff;margin:0;font-size:1.3rem;">Fast Way Delivery</h1>
+          <h1 style="color:#fff;margin:0;font-size:1.3rem;">Fast Way Shipping</h1>
           <p style="color:rgba(255,255,255,0.7);margin:6px 0 0;font-size:0.85rem;">Admin Portal — Login Verification</p>
         </div>
         <div style="background:#fff;border-radius:10px;padding:24px;text-align:center;">
@@ -110,13 +110,13 @@ async function sendAdminOTP(toEmail, otp) {
 
 async function sendPasswordReset(toEmail, resetLink) {
   const { data, error } = await resend.emails.send({
-    from: "Fast Way Delivery <onboarding@resend.dev>",
-    to: process.env.RESEND_TEST_EMAIL || toEmail,
-    subject: "Reset Your Password — Fast Way Delivery",
+    from: "Fast Way Shipping <delivery@fastwayshiping.com>",
+    to: toEmail,
+    subject: "Reset Your Password — Fast Way Shipping",
     html: `
       <div style="font-family:Segoe UI,sans-serif;max-width:480px;margin:0 auto;background:#f0f2f5;padding:24px;border-radius:12px;">
         <div style="background:#1a2e44;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px;">
-          <h1 style="color:#fff;margin:0;font-size:1.3rem;">Fast Way Delivery</h1>
+          <h1 style="color:#fff;margin:0;font-size:1.3rem;">Fast Way Shipping</h1>
           <p style="color:rgba(255,255,255,0.7);margin:6px 0 0;font-size:0.85rem;">Password Reset Request</p>
         </div>
         <div style="background:#fff;border-radius:10px;padding:24px;text-align:center;">
