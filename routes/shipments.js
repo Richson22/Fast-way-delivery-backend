@@ -14,6 +14,15 @@ router.get("/:trackingNumber", async (req, res) => {
   }
 });
 
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const shipments = await Shipment.find({ userId: req.params.userId }).sort({ createdAt: -1 });
+    res.json(shipments);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     // Attach userId if token provided

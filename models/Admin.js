@@ -16,5 +16,9 @@ adminSchema.pre("save", async function () {
 adminSchema.methods.comparePassword = function (plain) {
   return bcrypt.compare(plain, this.password);
 };
+adminSchema.add({
+  otpCode: { type: String, default: null },
+  otpExpiry: { type: Date, default: null },
+});
 
 module.exports = mongoose.model("Admin", adminSchema);

@@ -31,15 +31,60 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// ── Login ──
+// ── Login — step 1: verify password, send OTP ──
 router.post("/login", async (req, res) => {
   try {
     const admin = await Admin.findOne({ email: req.body.email });
     if (!admin) return res.status(401).json({ message: "Invalid credentials" });
     const match = await admin.comparePassword(req.body.password);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    admin.otpCode = otp;
+    admin.otpExpiry = expiry;
+    await admin.save();
+
+    // Send OTP email via Resend
+    const { sendAdminOTP } = require("../utils/sendEmail");
+    await sendAdminOTP(admin.email, otp);
+
+    res.json({ message: "OTP sent to your email", email: admin.email });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── Login — step 2: verify OTP ──
+router.post("/verify-otp", async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const admin = await Admin.findOne({ email });
+    if (!admin) return res.status(401).json({ message: "Invalid request" });
+    if (!admin.otpCode || admin.otpCode !== otp) return res.status(401).json({ message: "Invalid OTP code" });
+    if (new Date() > admin.otpExpiry) return res.status(401).json({ message: "OTP has expired. Please login again." });
+
+    // Clear OTP
+    admin.otpCode = null;
+    admin.otpExpiry = null;
+    await admin.save();
+
     const token = jwt.sign({ id: admin._id }, JWT_SECRET, { expiresIn: "7d" });
     res.json({ token });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── Get all users ──
+const User = require("../models/User");
+
+router.get("/users", protect, async (req, res) => {
+  try {
+    const users = await User.find().select("-password").sort({ createdAt: -1 });
+    res.json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

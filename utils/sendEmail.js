@@ -79,4 +79,33 @@ async function sendShipmentConfirmation(toEmail, shipment) {
   console.log("Resend response:", data);
 }
 
-module.exports = { sendShipmentConfirmation };
+async function sendAdminOTP(toEmail, otp) {
+  const { data, error } = await resend.emails.send({
+    from: "Fast Way Delivery <onboarding@resend.dev>",
+    to: process.env.RESEND_TEST_EMAIL || toEmail,
+    subject: "Your Admin Login Code",
+    html: `
+      <div style="font-family:Segoe UI,sans-serif;max-width:480px;margin:0 auto;background:#f0f2f5;padding:24px;border-radius:12px;">
+        <div style="background:#1a2e44;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px;">
+          <h1 style="color:#fff;margin:0;font-size:1.3rem;">Fast Way Delivery</h1>
+          <p style="color:rgba(255,255,255,0.7);margin:6px 0 0;font-size:0.85rem;">Admin Portal — Login Verification</p>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:24px;text-align:center;">
+          <p style="color:#1a2e44;font-weight:600;margin:0 0 16px;">Your one-time login code is:</p>
+          <div style="background:#f8fafc;border:2px dashed #e2e8f0;border-radius:8px;padding:20px;margin-bottom:16px;">
+            <p style="margin:0;font-size:2rem;font-weight:800;color:#ff6b00;letter-spacing:0.2em;">${otp}</p>
+          </div>
+          <p style="color:#64748b;font-size:0.82rem;margin:0;">This code expires in <strong>10 minutes</strong>.</p>
+          <p style="color:#64748b;font-size:0.82rem;margin:8px 0 0;">If you didn't request this, ignore this email.</p>
+        </div>
+      </div>
+    `,
+  });
+  if (error) {
+    console.error("Resend OTP error:", error);
+    throw new Error(error.message);
+  }
+  console.log("OTP email sent:", data);
+}
+
+module.exports = { sendShipmentConfirmation, sendAdminOTP };
