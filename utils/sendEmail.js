@@ -108,4 +108,38 @@ async function sendAdminOTP(toEmail, otp) {
   console.log("OTP email sent:", data);
 }
 
-module.exports = { sendShipmentConfirmation, sendAdminOTP };
+async function sendPasswordReset(toEmail, resetLink) {
+  const { data, error } = await resend.emails.send({
+    from: "Fast Way Delivery <onboarding@resend.dev>",
+    to: process.env.RESEND_TEST_EMAIL || toEmail,
+    subject: "Reset Your Password — Fast Way Delivery",
+    html: `
+      <div style="font-family:Segoe UI,sans-serif;max-width:480px;margin:0 auto;background:#f0f2f5;padding:24px;border-radius:12px;">
+        <div style="background:#1a2e44;border-radius:10px;padding:24px;text-align:center;margin-bottom:20px;">
+          <h1 style="color:#fff;margin:0;font-size:1.3rem;">Fast Way Delivery</h1>
+          <p style="color:rgba(255,255,255,0.7);margin:6px 0 0;font-size:0.85rem;">Password Reset Request</p>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:24px;text-align:center;">
+          <p style="font-size:2rem;margin:0 0 12px;">🔐</p>
+          <p style="color:#1a2e44;font-weight:700;font-size:1rem;margin:0 0 8px;">Reset your password</p>
+          <p style="color:#64748b;font-size:0.85rem;margin:0 0 24px;line-height:1.6;">
+            Click the button below to set a new password. This link expires in <strong>30 minutes</strong>.
+          </p>
+          <a href="${resetLink}" style="display:inline-block;background:#1a2e44;color:#fff;text-decoration:none;padding:14px 32px;border-radius:10px;font-weight:700;font-size:0.95rem;margin-bottom:20px;">
+            Reset Password →
+          </a>
+          <p style="color:#94a3b8;font-size:0.78rem;margin:0;">
+            If you didn't request this, ignore this email — your password won't change.
+          </p>
+        </div>
+      </div>
+    `,
+  });
+  if (error) {
+    console.error("Resend reset error:", error);
+    throw new Error(error.message);
+  }
+  console.log("Reset email sent:", data);
+}
+
+module.exports = { sendShipmentConfirmation, sendAdminOTP, sendPasswordReset };

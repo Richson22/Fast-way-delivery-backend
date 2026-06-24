@@ -7,6 +7,7 @@ const shipmentRoutes = require("./routes/shipments");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api/shipments", shipmentRoutes);
 const { router: adminRoutes } = require("./routes/admin");

@@ -64,4 +64,50 @@ router.get("/me", protect, async (req, res) => {
   }
 });
 
+const crypto = require("crypto");
+
+// ── Forgot password ──
+router.post("/forgot-password", async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) return res.json({ message: "If that email exists, a reset link has been sent." });
+
+    const token  = crypto.randomBytes(32).toString("hex");
+    const expiry = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
+
+    user.resetToken       = token;
+    user.resetTokenExpiry = expiry;
+    await user.save();
+
+    const resetLink = `${process.env.FRONTEND_URL}/ResetPassword?token=${token}`;
+    const { sendPasswordReset } = require("../utils/sendEmail");
+    await sendPasswordReset(user.email, resetLink);
+
+    res.json({ message: "Reset link sent." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── Reset password ──
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const user = await User.findOne({
+      resetToken:       token,
+      resetTokenExpiry: { $gt: new Date() },
+    });
+    if (!user) return res.status(400).json({ message: "Invalid or expired reset link." });
+
+    user.password         = password;
+    user.resetToken       = null;
+    user.resetTokenExpiry = null;
+    await user.save();
+
+    res.json({ message: "Password reset successful." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = { router, protect };

@@ -23,7 +23,13 @@ const shipmentSchema = new mongoose.Schema({
   destinationCity: String,
   currentCoords: { lat: { type: Number, default: null }, lng: { type: Number, default: null } },
   timeline: [timelineSchema],
+  paymentStatus: { type: String, default: "Awaiting Verification" },
+  paidVia: { type: String, default: "" },
+  paymentAmount: { type: String, default: "" },
+  paymentVerified: { type: Boolean, default: false },
+  receiptUrl: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
+  
 });
 
 module.exports = mongoose.model("Shipment", shipmentSchema);
