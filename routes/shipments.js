@@ -58,15 +58,21 @@ const multer = require("multer");
 const path   = require("path");
 const fs     = require("fs");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const dir = "uploads/receipts";
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
-  },
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `${req.params.trackingNumber}-receipt${ext}`);
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:    process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "fastway-receipts",
+    allowed_formats: ["jpg", "jpeg", "png", "webp", "pdf"],
+    public_id: (req, file) => `${req.params.trackingNumber}-receipt`,
   },
 });
 
@@ -83,7 +89,7 @@ router.post("/:trackingNumber/receipt", upload.single("receipt"), async (req, re
   try {
     const shipment = await Shipment.findOneAndUpdate(
       { trackingNumber: req.params.trackingNumber },
-      { receiptUrl: req.file.path },
+      { receiptUrl: req.file.path },  // Cloudinary automatically sets req.file.path to the URL
       { new: true }
     );
     if (!shipment) return res.status(404).json({ error: "Shipment not found" });
