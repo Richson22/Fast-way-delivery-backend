@@ -110,4 +110,32 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+// Update name
+router.put("/me", protect, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { name: req.body.name },
+      { new: true }
+    ).select("-password");
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Change password
+router.post("/change-password", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const match = await user.comparePassword(req.body.currentPassword);
+    if (!match) return res.status(401).json({ message: "Current password is incorrect." });
+    user.password = req.body.newPassword;
+    await user.save();
+    res.json({ message: "Password changed." });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = { router, protect };
