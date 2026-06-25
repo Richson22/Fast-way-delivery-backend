@@ -66,7 +66,7 @@ async function sendShipmentConfirmation(toEmail, shipment) {
         </div>
 
         <p style="text-align:center;font-size:0.75rem;color:#94a3b8;margin:0;">
-          © 2026 Fast Way Delivery. All rights reserved.<br/>
+          © 2026 Fast Way Shipping. All rights reserved.<br/>
           If you didn't create this shipment, please contact support immediately.
         </p>
       </div>
