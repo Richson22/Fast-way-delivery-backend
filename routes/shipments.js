@@ -100,4 +100,16 @@ router.post("/:trackingNumber/receipt", upload.single("receipt"), async (req, re
   }
 });
 
+router.get("/:trackingNumber/receipt-view", async (req, res) => {
+  try {
+    const shipment = await Shipment.findOne({
+      trackingNumber: req.params.trackingNumber.toUpperCase(),
+    });
+    if (!shipment) return res.status(404).json({ message: "Shipment not found" });
+    res.json(shipment);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
