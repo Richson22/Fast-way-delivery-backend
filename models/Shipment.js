@@ -27,6 +27,8 @@ const shipmentSchema = new mongoose.Schema({
   paidVia: { type: String, default: "" },
   paymentAmount: { type: String, default: "" },
   paymentVerified: { type: Boolean, default: false },
+ customerName: { type: String, default: "" },
+  goodsDescription: { type: String, default: "" },
   receiptUrl: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
   
