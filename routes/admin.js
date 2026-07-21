@@ -109,6 +109,17 @@ router.put("/shipments/:id", protect, async (req, res) => {
       { new: true }
     );
     if (!shipment) return res.status(404).json({ message: "Shipment not found" });
+
+    if (req.body.status === "Custom Cleared") {
+      const toEmail = shipment.userEmail || shipment.email;
+      if (toEmail) {
+        const { sendCustomsClearedEmail } = require("../utils/sendEmail");
+        sendCustomsClearedEmail(toEmail, shipment)
+          .then(() => console.log("Customs cleared email sent to:", toEmail))
+          .catch((err) => console.error("Customs cleared email failed:", err.message));
+      }
+    }
+
     res.json(shipment);
   } catch (err) {
     res.status(400).json({ message: err.message });
