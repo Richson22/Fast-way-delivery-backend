@@ -30,6 +30,7 @@ const shipmentSchema = new mongoose.Schema({
  customerName: { type: String, default: "" },
   goodsDescription: { type: String, default: "" },
   email: { type: String, default: "" },
+  deliveryAddress: { type: String, default: "" },
   receiptUrl: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
   customsRef: { type: String, default: "" },

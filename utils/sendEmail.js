@@ -62,7 +62,7 @@ async function sendShipmentConfirmation(toEmail, shipment) {
 
         <div style="background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;text-align:center;">
           <p style="margin:0 0 8px;font-size:0.82rem;color:#64748b;">Track your shipment anytime at</p>
-          <p style="margin:0;font-size:0.9rem;font-weight:700;color:#1e3a5f;">fastwaydelivery.com/track</p>
+          <p style="margin:0;font-size:0.9rem;font-weight:700;color:#1e3a5f;">https://www.fastwayshiping.com/TrackShipment</p>
         </div>
 
         <p style="text-align:center;font-size:0.75rem;color:#94a3b8;margin:0;">
@@ -157,10 +157,14 @@ async function sendCustomsClearedEmail(toEmail, shipment) {
 
         <div style="background:#fff;border-radius:10px;padding:24px;margin-bottom:16px;">
           <div style="margin-bottom:16px;">
-            <p style="margin:0;font-weight:700;color:#1e293b;font-size:1rem;">🛃 Your Shipment Has Cleared Customs!</p>
+            <p style="margin:0;font-weight:700;color:#1e293b;font-size:1rem;">🛃 Your Shipment Has been Cleared by Customs!</p>
           </div>
           <p style="color:#64748b;font-size:0.88rem;margin:0 0 16px;">
-            Good news — your shipment has passed customs inspection and is continuing on its way to you.
+            Good news — your shipment has passed customs inspection, Now Pending Store Keepers Clearance. Kindly get the store keepers clearance.
+          </p>
+
+          <p style="color:#64748b;font-size:0.88rem;margin:0 0 16px;">
+            Your package will be on its way when you get cleared by the store keeper.
           </p>
 
           <div style="background:#f8fafc;border:2px dashed #e2e8f0;border-radius:8px;padding:16px;text-align:center;margin-bottom:20px;">
@@ -182,15 +186,15 @@ async function sendCustomsClearedEmail(toEmail, shipment) {
               <td style="padding:8px 0;color:#1e293b;font-weight:600;text-align:right;">${shipment.clearedDate}</td>
             </tr>` : ''}
             <tr>
-              <td style="padding:8px 0;color:#64748b;">Estimated Delivery</td>
-              <td style="padding:8px 0;color:#1e293b;font-weight:600;text-align:right;">${shipment.estimatedDelivery ?? "—"}</td>
+              <td style="padding:8px 0;color:#64748b;">Delivery Address</td>
+              <td style="padding:8px 0;color:#1e293b;font-weight:600;text-align:right;">${shipment.deliveryAddress || "—"}</td>
             </tr>
           </table>
         </div>
 
         <div style="background:#fff;border-radius:10px;padding:16px;margin-bottom:16px;text-align:center;">
           <p style="margin:0 0 8px;font-size:0.82rem;color:#64748b;">Track your shipment anytime at</p>
-          <p style="margin:0;font-size:0.9rem;font-weight:700;color:#1e3a5f;">fastwaydelivery.com/track</p>
+          <p style="margin:0;font-size:0.9rem;font-weight:700;color:#1e3a5f;">fastwayshiping.com/TrackShipment</p>
         </div>
 
         <p style="text-align:center;font-size:0.75rem;color:#94a3b8;margin:0;">
