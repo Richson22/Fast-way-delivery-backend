@@ -35,6 +35,11 @@ router.post("/", async (req, res) => {
         req.body.userEmail = decoded.email;
       } catch {}
     }
+    // Fallback: if no userEmail was set from a logged-in token (e.g. admin-created shipments),
+    // use the plain email field sent in the payload so notifications always have somewhere to go.
+    if (!req.body.userEmail && req.body.email) {
+      req.body.userEmail = req.body.email;
+    }
     const shipment = new Shipment(req.body);
     await shipment.save();
 

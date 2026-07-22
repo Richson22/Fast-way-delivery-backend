@@ -29,6 +29,7 @@ const shipmentSchema = new mongoose.Schema({
   paymentVerified: { type: Boolean, default: false },
  customerName: { type: String, default: "" },
   goodsDescription: { type: String, default: "" },
+  email: { type: String, default: "" },
   receiptUrl: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
   customsRef: { type: String, default: "" },
