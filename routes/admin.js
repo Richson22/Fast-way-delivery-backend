@@ -136,4 +136,19 @@ router.delete("/shipments/:id", protect, async (req, res) => {
   }
 });
 
+// ── Send no-reply mail ──
+const { sendAdminMail } = require("../utils/sendEmail");
+
+router.post("/send-mail", protect, async (req, res) => {
+  const { to, subject, message } = req.body;
+  if (!to || !subject || !message)
+    return res.status(400).json({ error: "to, subject and message are required." });
+  try {
+    const data = await sendAdminMail({ to, subject, message });
+    res.json({ success: true, id: data.id });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = { router, protect };

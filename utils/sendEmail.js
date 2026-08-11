@@ -210,4 +210,38 @@ async function sendCustomsClearedEmail(toEmail, shipment) {
   console.log("Customs cleared email sent:", data);
 }
 
-module.exports = { sendShipmentConfirmation, sendAdminOTP, sendPasswordReset, sendCustomsClearedEmail };
+async function sendAdminMail({ to, subject, message }) {
+  const { data, error } = await resend.emails.send({
+    from: "Fast Way Shipping <noreply@fastwayshiping.com>",
+    reply_to: "noreply@fastwayshiping.com",
+    to: [to],
+    subject,
+    html: `
+      <div style="font-family:Segoe UI,sans-serif;max-width:600px;margin:0 auto;background:#f0f2f5;padding:24px;border-radius:12px;">
+        <div style="background:#0D2B6E;border-radius:10px;padding:24px;display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+          <div style="background:#F97316;color:#0D2B6E;font-size:18px;font-weight:900;padding:5px 10px;border-radius:4px;letter-spacing:-1px;">FW</div>
+          <div>
+            <div style="color:#fff;font-size:16px;font-weight:800;line-height:1;">FastWay</div>
+            <div style="color:rgba(255,255,255,0.6);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;">Shipping Co.</div>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:28px;margin-bottom:16px;">
+          <p style="font-size:15px;font-weight:700;color:#1a2e44;margin:0 0 16px;">${subject}</p>
+          <div style="font-size:14px;color:#374151;line-height:1.8;white-space:pre-line;">${message}</div>
+        </div>
+        <div style="background:#fff;border-radius:10px;padding:16px;text-align:center;">
+          <p style="font-size:11px;color:#94a3b8;margin:0 0 4px;">This is an automated message from Fast Way Shipping. Please do not reply to this email.</p>
+          <p style="font-size:11px;color:#94a3b8;margin:0;">© ${new Date().getFullYear()} Fast Way Shipping · fastwayshiping.com</p>
+        </div>
+      </div>
+    `,
+  });
+  if (error) {
+    console.error("Resend admin mail error:", error);
+    throw new Error(error.message);
+  }
+  console.log("Admin mail sent:", data);
+  return data;
+}
+
+module.exports = { sendShipmentConfirmation, sendAdminOTP, sendPasswordReset, sendCustomsClearedEmail, sendAdminMail };
