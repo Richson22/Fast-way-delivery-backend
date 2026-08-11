@@ -210,7 +210,7 @@ async function sendCustomsClearedEmail(toEmail, shipment) {
   console.log("Customs cleared email sent:", data);
 }
 
-const EmailThread = require("./models/EmailThread"); // adjust path to match your project
+const EmailThread = require("../models/EmailThread"); // adjust path to match your project
 
 async function sendAdminMail({ to, subject, message }) {
   // 1. Create the thread first so we have an ID to tag the reply-to address with
