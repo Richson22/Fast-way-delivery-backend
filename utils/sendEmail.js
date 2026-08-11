@@ -222,16 +222,16 @@ async function sendAdminMail({ to, subject, message }) {
         direction: "outbound",
         subject,
         body: message,
-        fromAddress: "noreply@fastwayshiping.com",
+        fromAddress: "delivery@fastwayshiping.com",
         toAddress: to,
       },
     ],
   });
 
-const replyTo = `reply+${thread._id}@euheiestee.resend.app`;
+  const replyTo = `reply+${thread._id}@euheiestee.resend.app`;
 
   const { data, error } = await resend.emails.send({
-    from: "Fast Way Shipping <noreply@fastwayshiping.com>",
+    from: "Fast Way Shipping <delivery@fastwayshiping.com>",
     replyTo: replyTo,
     to: [to],
     subject,
