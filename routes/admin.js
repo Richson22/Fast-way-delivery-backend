@@ -151,4 +151,16 @@ router.post("/send-mail", protect, async (req, res) => {
   }
 });
 
+// ── Get all email threads (for Inbox tab) ──
+const EmailThread = require("../models/EmailThread");
+
+router.get("/threads", protect, async (req, res) => {
+  try {
+    const threads = await EmailThread.find().sort({ lastMessageAt: -1, updatedAt: -1 });
+    res.json(threads);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = { router, protect };
