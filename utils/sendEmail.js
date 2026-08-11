@@ -232,7 +232,7 @@ const replyTo = `reply+${thread._id}@euheiestee.resend.app`;
 
   const { data, error } = await resend.emails.send({
     from: "Fast Way Shipping <noreply@fastwayshiping.com>",
-    reply_to: replyTo,
+    replyTo: replyTo,
     to: [to],
     subject,
     html: `
