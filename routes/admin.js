@@ -163,4 +163,24 @@ router.get("/threads", protect, async (req, res) => {
   }
 });
 
+// ── Delete a single thread ──
+router.delete("/threads/:id", protect, async (req, res) => {
+  try {
+    await EmailThread.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ── Delete ALL threads (bulk clear) ──
+router.delete("/threads", protect, async (req, res) => {
+  try {
+    const result = await EmailThread.deleteMany({});
+    res.json({ message: "All threads deleted", count: result.deletedCount });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = { router, protect };
