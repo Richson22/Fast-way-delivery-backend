@@ -6,6 +6,9 @@ const shipmentRoutes = require("./routes/shipments");
 
 const app = express();
 app.use(cors());
+const emailWebhookRouter = require("./routes/emailWebhook"); // adjust path
+app.use("/api", emailWebhookRouter); // mounted BEFORE json parser, so raw body survives
+
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 

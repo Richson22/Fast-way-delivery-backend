@@ -210,10 +210,29 @@ async function sendCustomsClearedEmail(toEmail, shipment) {
   console.log("Customs cleared email sent:", data);
 }
 
+const EmailThread = require("./models/EmailThread"); // adjust path to match your project
+
 async function sendAdminMail({ to, subject, message }) {
+  // 1. Create the thread first so we have an ID to tag the reply-to address with
+  const thread = await EmailThread.create({
+    customerEmail: to,
+    subject,
+    messages: [
+      {
+        direction: "outbound",
+        subject,
+        body: message,
+        fromAddress: "noreply@fastwayshiping.com",
+        toAddress: to,
+      },
+    ],
+  });
+
+const replyTo = `reply+${thread._id}@euheiestee.resend.app`;
+
   const { data, error } = await resend.emails.send({
     from: "Fast Way Shipping <noreply@fastwayshiping.com>",
-    reply_to: "noreply@fastwayshiping.com",
+    reply_to: replyTo,
     to: [to],
     subject,
     html: `
@@ -230,18 +249,23 @@ async function sendAdminMail({ to, subject, message }) {
           <div style="font-size:14px;color:#374151;line-height:1.8;white-space:pre-line;">${message}</div>
         </div>
         <div style="background:#fff;border-radius:10px;padding:16px;text-align:center;">
-          <p style="font-size:11px;color:#94a3b8;margin:0 0 4px;">This is an automated message from Fast Way Shipping. Please do not reply to this email.</p>
+          <p style="font-size:11px;color:#94a3b8;margin:0 0 4px;">Reply to this email to reach our support team.</p>
           <p style="font-size:11px;color:#94a3b8;margin:0;">© ${new Date().getFullYear()} Fast Way Shipping · fastwayshiping.com</p>
         </div>
       </div>
     `,
   });
+
   if (error) {
     console.error("Resend admin mail error:", error);
     throw new Error(error.message);
   }
+
+  thread.messages[0].resendId = data.id;
+  await thread.save();
+
   console.log("Admin mail sent:", data);
-  return data;
+  return { ...data, threadId: thread._id };
 }
 
 module.exports = { sendShipmentConfirmation, sendAdminOTP, sendPasswordReset, sendCustomsClearedEmail, sendAdminMail };
