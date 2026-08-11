@@ -18,11 +18,11 @@ router.post(
       const event = resend.webhooks.verify({
         payload,
         headers: {
-          "svix-id": req.headers["svix-id"],
-          "svix-timestamp": req.headers["svix-timestamp"],
-          "svix-signature": req.headers["svix-signature"],
+          id: req.headers["svix-id"],
+          timestamp: req.headers["svix-timestamp"],
+          signature: req.headers["svix-signature"],
         },
-        secret: process.env.RESEND_WEBHOOK_SECRET,
+        webhookSecret: process.env.RESEND_WEBHOOK_SECRET,
       });
 
       if (event.type === "email.received") {
