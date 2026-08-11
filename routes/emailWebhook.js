@@ -11,6 +11,7 @@ router.post(
   "/webhooks/resend",
   express.raw({ type: "application/json" }),
   async (req, res) => {
+    console.log("Webhook secret loaded:", process.env.RESEND_WEBHOOK_SECRET ? "YES (" + process.env.RESEND_WEBHOOK_SECRET.slice(0, 8) + "...)" : "MISSING");
     try {
       const payload = req.body.toString("utf8");
 
