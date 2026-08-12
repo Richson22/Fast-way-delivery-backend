@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const Admin = require("../models/Admin");
 const Shipment = require("../models/Shipment");
+const EmailThread = require("../models/EmailThread");
 
 const JWT_SECRET = process.env.JWT_SECRET || "fastway_secret_key";
 
@@ -136,23 +137,38 @@ router.delete("/shipments/:id", protect, async (req, res) => {
   }
 });
 
-// ── Send no-reply mail ──
+// ── Send mail + optionally append to thread ──
 const { sendAdminMail } = require("../utils/sendEmail");
 
 router.post("/send-mail", protect, async (req, res) => {
-  const { to, subject, message } = req.body;
+  const { to, subject, message, threadId } = req.body;
   if (!to || !subject || !message)
     return res.status(400).json({ error: "to, subject and message are required." });
   try {
     const data = await sendAdminMail({ to, subject, message });
+
+    if (threadId) {
+      // append reply to existing thread
+      await EmailThread.findByIdAndUpdate(threadId, {
+        $push: { messages: { direction: "outbound", body: message, createdAt: new Date() } },
+        $set:  { lastMessageAt: new Date() },
+      });
+    } else {
+      // create new thread
+      await EmailThread.create({
+        customerEmail: to,
+        subject,
+        messages: [{ direction: "outbound", body: message, createdAt: new Date() }],
+        lastMessageAt: new Date(),
+      });
+    }
+
     res.json({ success: true, id: data.id });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ── Get all email threads (for Inbox tab) ──
-const EmailThread = require("../models/EmailThread");
 
 router.get("/threads", protect, async (req, res) => {
   try {
