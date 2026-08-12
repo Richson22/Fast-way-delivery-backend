@@ -154,13 +154,21 @@ router.post("/send-mail", protect, async (req, res) => {
         $set:  { lastMessageAt: new Date() },
       });
     } else {
-      // create new thread
-      await EmailThread.create({
-        customerEmail: to,
-        subject,
-        messages: [{ direction: "outbound", body: message, createdAt: new Date() }],
-        lastMessageAt: new Date(),
-      });
+      // find existing thread with same email+subject or create new one
+      const existing = await EmailThread.findOne({ customerEmail: to, subject });
+      if (existing) {
+        await EmailThread.findByIdAndUpdate(existing._id, {
+          $push: { messages: { direction: "outbound", body: message, createdAt: new Date() } },
+          $set:  { lastMessageAt: new Date() },
+        });
+      } else {
+        await EmailThread.create({
+          customerEmail: to,
+          subject,
+          messages: [{ direction: "outbound", body: message, createdAt: new Date() }],
+          lastMessageAt: new Date(),
+        });
+      }
     }
 
     res.json({ success: true, id: data.id });
